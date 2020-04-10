@@ -1,0 +1,14 @@
+@import "../../common/styles/mixin";
+
+.icon {
+  //background-image: url("./logo@2x.png");
+  @include bg-image('/images/logo');
+  display: inline-block;
+  vertical-align: top;
+  margin-top: 6px;
+  width: 30px;
+  height: 32px;
+  margin-right: 9px;
+  background-size: 30px 32px
+
+}
