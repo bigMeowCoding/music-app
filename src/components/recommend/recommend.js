@@ -12,7 +12,6 @@ export function Recommend() {
     function _getRecommend() {
         getRecommend().then((res) => {
             if (res.code === ERR_OK) {
-                console.log('rec')
                 setRecommends(res.data.slider);
             }
         }, (error) => {
@@ -32,7 +31,7 @@ export function Recommend() {
                     {
                         recommends.length ?
                             <div className='slider-wrapper'>
-                                <Slider loop={true}>
+                                <Slider loop={true} autoplay={true}>
                                     {
                                         recommends.map((item, index) => {
                                             return (
