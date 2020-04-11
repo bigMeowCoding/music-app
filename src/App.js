@@ -1,5 +1,5 @@
 import React from 'react';
-import './App.css';
+import './common/styles/index.scss';
 import {MHeader} from "./components/m-header/m-header";
 
 function App() {

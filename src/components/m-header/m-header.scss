@@ -1,14 +1,27 @@
 @import "../../common/styles/mixin";
+@import "../../common/styles/variable";
 
-.icon {
-  //background-image: url("./logo@2x.png");
-  @include bg-image('/images/logo');
-  display: inline-block;
-  vertical-align: top;
-  margin-top: 6px;
-  width: 30px;
-  height: 32px;
-  margin-right: 9px;
-  background-size: 30px 32px
+$header-height: 44px;
+.m-header {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: $color-theme;
+  height: $header-height;
 
+  .icon {
+    @include bg-image('/images/logo');
+    display: inline-block;
+    vertical-align: top;
+    margin-top: 6px;
+    width: 30px;
+    height: 32px;
+    margin-right: 9px;
+    background-size: 30px 32px
+  }
+
+  .text {
+    line-height: $header-height;
+  }
 }
+
