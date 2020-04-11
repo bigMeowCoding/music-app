@@ -23,6 +23,7 @@ export function Recommend() {
         if (!recommends || !recommends.length) {
             _getRecommend();
         }
+
     }, []);
     return (
         <div className='recommend'>

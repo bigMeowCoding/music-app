@@ -28,7 +28,7 @@ export function Slider(props) {
     function initSliderWidth(isResize) {
         if (sliderRef.current && sliderGroupRef.current) {
             const group = sliderGroupRef.current, slider = sliderRef.current, children = group.children;
-            if(!isResize) {
+            if (!isResize) {
                 setPicNumber(children.length);
             }
             let width = 0, sliderWidth = slider.clientWidth;
@@ -90,6 +90,14 @@ export function Slider(props) {
         initBetterScroll();
         if (autoplay) {
             goToNextPage();
+        }
+        return () => {
+            if (autoplayTimer) {
+                clearTimeout(autoplayTimer);
+            }
+            if (resizeTimer) {
+                clearTimeout(resizeTimer);
+            }
         }
     }, []);
     return (
