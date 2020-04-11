@@ -1,0 +1,28 @@
+@import "../../common/styles/variable";
+@import "../../common/styles/mixin";
+
+$tab-height: 44px;
+
+.tab {
+  display: flex;
+  height: $tab-height;
+  line-height: $tab-height;
+  font-size: $font-size-medium;
+
+  .tab-item {
+    @include flex(1);
+    text-align: center;
+
+    .tab-link {
+      padding-bottom: 5px;
+      color: $color-text-l;
+    }
+
+    &.selected {
+      .tab-link {
+        color: $color-theme;
+        border-bottom: 2px solid $color-theme
+      }
+    }
+  }
+}

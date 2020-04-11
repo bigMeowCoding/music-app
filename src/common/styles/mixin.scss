@@ -22,3 +22,7 @@
     bottom: -10px;
   }
 }
+@mixin flex($num) {
+  flex:$num;
+  min-width: 0;
+}
