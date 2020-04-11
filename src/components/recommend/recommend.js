@@ -1,7 +1,7 @@
 import * as React from "react";
 import {useEffect, useState} from "react";
 
-import {getRecommend} from "../../api/recommend";
+import {getDiscList, getRecommend} from "../../api/recommend";
 import {ERR_OK} from "../../api/config";
 import {Slider} from "../../base/slider/slider";
 import './recommend.scss'
@@ -18,10 +18,17 @@ export function Recommend() {
             console.error(error);
         })
     }
-
+   function _getDiscList() {
+        getDiscList().then((res) => {
+            if (res.code === ERR_OK) {
+                this.discList = res.data.list
+            }
+        })
+    }
     useEffect(() => {
         if (!recommends || !recommends.length) {
             _getRecommend();
+            _getDiscList();
         }
 
     }, []);
