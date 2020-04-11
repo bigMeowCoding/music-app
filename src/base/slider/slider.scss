@@ -1,6 +1,8 @@
 @import "../../common/styles/variable";
 @import "../../common/styles/mixin";
-
+.slider {
+  min-height: 1px;
+}
 .slider-group {
   position: relative;
   white-space: nowrap;

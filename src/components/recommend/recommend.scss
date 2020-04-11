@@ -1,0 +1,16 @@
+.recommend {
+  position: fixed;
+  top:88px;
+  bottom: 0;
+  width: 100%;
+  .recommend-content {
+    height: 100%;
+    overflow: hidden;
+    .slider-wrapper {
+      position: relative;
+      width: 100%;
+      overflow: hidden;
+
+    }
+  }
+}

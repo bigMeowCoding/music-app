@@ -1,8 +1,10 @@
 import * as React from "react";
 import {useEffect, useState} from "react";
+
 import {getRecommend} from "../../api/recommend";
 import {ERR_OK} from "../../api/config";
 import {Slider} from "../../base/slider/slider";
+import './recommend.scss'
 
 export function Recommend() {
     let [recommends, setRecommends] = useState([]);
@@ -24,23 +26,31 @@ export function Recommend() {
         }
     }, []);
     return (
-        <div>
-            {
-                recommends.length ?
-                    <Slider>
-                        {
-                            recommends.map((item) => {
-                                return (
-                                    <div>
-                                        <a href={item.linkUrl}>
-                                            <img className="needsclick" src={item.picUrl}/>
-                                        </a>
-                                    </div>
-                                )
-                            })
-                        }
-                    </Slider> : null
-            }
+        <div className='recommend'>
+            <div className="recommend-content">
+                <div>
+                    {
+                        recommends.length ?
+                            <div className='slider-wrapper'>
+                                <Slider loop={true}>
+                                    {
+                                        recommends.map((item, index) => {
+                                            return (
+                                                <div key={index}>
+                                                    <a href={item.linkUrl}>
+                                                        <img className="needsclick" src={item.picUrl}/>
+                                                    </a>
+                                                </div>
+                                            )
+                                        })
+                                    }
+                                </Slider>
+                            </div>
+                            : null
+                    }
+                </div>
+
+            </div>
         </div>
     )
 }
