@@ -1,14 +1,17 @@
 import * as React from "react";
-import {useEffect, useState} from "react";
+import {useEffect, useRef, useState} from "react";
 
 import {getDiscList, getRecommend} from "../../api/recommend";
 import {ERR_OK} from "../../api/config";
 import {Slider} from "../../base/slider/slider";
 import './recommend.scss'
+import {Scroll} from "../../base/scroll/scroll";
 
 export function Recommend() {
     let [recommends, setRecommends] = useState([]);
     let [discList, setDiscList] = useState([]);
+    const scrollRef = useRef();
+    let carouselIsNotLoaded = true;
 
     function _getRecommend() {
         getRecommend().then((res) => {
@@ -29,63 +32,74 @@ export function Recommend() {
     }
 
     useEffect(() => {
-        if (!recommends || !recommends.length) {
-            _getRecommend();
-            _getDiscList();
-        }
+        _getRecommend();
+        _getDiscList();
 
     }, []);
+
+    function carouselLoaded() {
+        const scroll = scrollRef.current;
+        if (scroll && carouselIsNotLoaded) {
+            scroll.refresh();
+            carouselIsNotLoaded = false;
+        }
+    }
+
     return (
         <div className='recommend'>
             <div className="recommend-content">
-                <div>
-                    {
-                        recommends.length ?
-                            <div className='slider-wrapper'>
-                                <Slider loop={true} autoplay={true}>
-                                    {
-                                        recommends.map((item, index) => {
-                                            return (
-                                                <div key={index}>
-                                                    <a href={item.linkUrl}>
-                                                        <img className="needsclick" src={item.picUrl}/>
-                                                    </a>
-                                                </div>
-                                            )
-                                        })
-                                    }
-                                </Slider>
-                            </div>
-                            : null
-                    }
-                </div>
-                <div className="recommend-list">
-                    <h1 className="list-title">
-                        热门歌单推荐
-                    </h1>
-                    <ul>
+                <Scroll data={discList} ref={scrollRef}>
+                    <div>
                         {
-                            discList.map((item, index) => {
-                                return (
-                                    <li key={index} className="item">
-                                        <div className="icon">
-                                            <img src={item.imgurl} alt=""/>
-                                        </div>
-                                        <div className="text">
-                                            <h2 className="name">
-                                                {item.creator.name}
-                                            </h2>
-                                            <p className="desc">
-                                                {item.dissname}
-                                            </p>
-                                        </div>
-                                    </li>
-                                )
-                            })
+                            recommends.length ?
+                                <div className='slider-wrapper'>
+                                    <Slider loop={true} autoplay={true}>
+                                        {
+                                            recommends.map((item, index) => {
+                                                return (
+                                                    <div key={index}>
+                                                        <a href={item.linkUrl}>
+                                                            <img onLoad={carouselLoaded} className="needsclick"
+                                                                 src={item.picUrl}/>
+                                                        </a>
+                                                    </div>
+                                                )
+                                            })
+                                        }
+                                    </Slider>
+                                </div>
+                                : null
                         }
-                    </ul>
-                </div>
+                        <div className="recommend-list">
+                            <h1 className="list-title">
+                                热门歌单推荐
+                            </h1>
+                            <ul>
+                                {
+                                    discList.map((item, index) => {
+                                        return (
+                                            <li key={index} className="item">
+                                                <div className="icon">
+                                                    <img src={item.imgurl} alt=""/>
+                                                </div>
+                                                <div className="text">
+                                                    <h2 className="name">
+                                                        {item.creator.name}
+                                                    </h2>
+                                                    <p className="desc">
+                                                        {item.dissname}
+                                                    </p>
+                                                </div>
+                                            </li>
+                                        )
+                                    })
+                                }
+                            </ul>
+                        </div>
+                    </div>
+                </Scroll>
             </div>
+
         </div>
     )
 }
