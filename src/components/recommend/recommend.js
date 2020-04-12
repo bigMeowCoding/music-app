@@ -8,6 +8,7 @@ import './recommend.scss'
 
 export function Recommend() {
     let [recommends, setRecommends] = useState([]);
+    let [discList, setDiscList] = useState([]);
 
     function _getRecommend() {
         getRecommend().then((res) => {
@@ -18,13 +19,15 @@ export function Recommend() {
             console.error(error);
         })
     }
-   function _getDiscList() {
+
+    function _getDiscList() {
         getDiscList().then((res) => {
             if (res.code === ERR_OK) {
-                this.discList = res.data.list
+                setDiscList(res.data.list);
             }
         })
     }
+
     useEffect(() => {
         if (!recommends || !recommends.length) {
             _getRecommend();
@@ -56,7 +59,32 @@ export function Recommend() {
                             : null
                     }
                 </div>
-
+                <div className="recommend-list">
+                    <h1 className="list-title">
+                        热门歌单推荐
+                    </h1>
+                    <ul>
+                        {
+                            discList.map((item, index) => {
+                                return (
+                                    <li key={index} className="item">
+                                        <div className="icon">
+                                            <img src={item.imgurl} alt=""/>
+                                        </div>
+                                        <div className="text">
+                                            <h2 className="name">
+                                                {item.creator.name}
+                                            </h2>
+                                            <p className="desc">
+                                                {item.dissname}
+                                            </p>
+                                        </div>
+                                    </li>
+                                )
+                            })
+                        }
+                    </ul>
+                </div>
             </div>
         </div>
     )
