@@ -1,6 +1,8 @@
 import * as React from "react";
 import {useEffect, useRef, useState} from "react";
 
+import LazyLoad from 'react-lazy-load';
+
 import {getDiscList, getRecommend} from "../../api/recommend";
 import {ERR_OK} from "../../api/config";
 import {Slider} from "../../base/slider/slider";
@@ -48,56 +50,64 @@ export function Recommend() {
     return (
         <div className='recommend'>
             <div className="recommend-content">
-                <Scroll data={discList} ref={scrollRef}>
-                    <div>
-                        {
-                            recommends.length ?
-                                <div className='slider-wrapper'>
-                                    <Slider loop={true} autoplay={true}>
-                                        {
-                                            recommends.map((item, index) => {
-                                                return (
-                                                    <div key={index}>
-                                                        <a href={item.linkUrl}>
-                                                            <img onLoad={carouselLoaded} className="needsclick"
-                                                                 src={item.picUrl}/>
-                                                        </a>
-                                                    </div>
-                                                )
-                                            })
-                                        }
-                                    </Slider>
-                                </div>
-                                : null
-                        }
-                        <div className="recommend-list">
-                            <h1 className="list-title">
-                                热门歌单推荐
-                            </h1>
-                            <ul>
+
+                    <Scroll data={discList} ref={scrollRef}>
+
+                        <div>
+                            {
+                                recommends.length ?
+                                    <div className='slider-wrapper'>
+                                        <Slider loop={true} autoplay={true}>
+                                            {
+                                                recommends.map((item, index) => {
+                                                    return (
+                                                        <div key={index}>
+                                                            <a href={item.linkUrl}>
+                                                                <img onLoad={carouselLoaded} className="needsclick"
+                                                                     src={item.picUrl}/>
+                                                            </a>
+                                                        </div>
+                                                    )
+                                                })
+                                            }
+                                        </Slider>
+                                    </div>
+                                    : null
+                            }
+                            <div className="recommend-list">
+                                <h1 className="list-title">
+                                    热门歌单推荐
+                                </h1>
+                                <ul>
+
                                 {
-                                    discList.map((item, index) => {
-                                        return (
-                                            <li key={index} className="item">
-                                                <div className="icon">
-                                                    <img src={item.imgurl} alt=""/>
-                                                </div>
-                                                <div className="text">
-                                                    <h2 className="name">
-                                                        {item.creator.name}
-                                                    </h2>
-                                                    <p className="desc">
-                                                        {item.dissname}
-                                                    </p>
-                                                </div>
-                                            </li>
-                                        )
-                                    })
-                                }
-                            </ul>
+                                        discList.map((item, index) => {
+                                            return (
+                                                <li key={index} className="item">
+                                                    <div className="icon">
+                                                        <LazyLoad>
+
+                                                        <img src={item.imgurl} alt=""/>
+                                                        </LazyLoad>
+                                                    </div>
+                                                    <div className="text">
+                                                        <h2 className="name">
+                                                            {item.creator.name}
+                                                        </h2>
+                                                        <p className="desc">
+                                                            {item.dissname}
+                                                        </p>
+                                                    </div>
+                                                </li>
+                                            )
+                                        })
+                                    }
+                                </ul>
+                            </div>
                         </div>
-                    </div>
-                </Scroll>
+
+                    </Scroll>
+
             </div>
 
         </div>

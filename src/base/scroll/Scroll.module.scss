@@ -1,3 +1,4 @@
 .scrollWrapper {
   height: 100%;
+  overflow: auto; // 配合react-lazy-load
 }
