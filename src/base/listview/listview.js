@@ -2,6 +2,7 @@ import * as React from "react";
 
 import {Scroll} from "../scroll/scroll";
 import './listview.scss'
+import LazyLoad from "react-lazy-load";
 
 export function ListView(props) {
     const {data} = props;
@@ -19,7 +20,9 @@ export function ListView(props) {
 
                                         return (
                                             <li className="list-group-item" key={item.id}>
-                                                <img className="avatar" src={item.avatar}/>
+                                                <LazyLoad>
+                                                    <img className="avatar" src={item.avatar}/>
+                                                </LazyLoad>
                                                 <span className="name">{item.name}</span>
                                             </li>)
                                     })}
