@@ -1,5 +1,5 @@
 import * as React from "react";
-import {useEffect, useState} from "react";
+import {useEffect, useRef, useState} from "react";
 import {getSingerList} from "../../api/singer";
 import {ERR_OK} from "../../api/config";
 import Singer from "../../common/js/Singer";
@@ -11,6 +11,7 @@ const HOT_NAME = '热门'
 
 export function SingerList() {
     let [singers, setSingers] = useState([]);
+    const scrollRef = useRef();
 
     function _getSingerList() {
         getSingerList().then((res) => {
@@ -19,6 +20,7 @@ export function SingerList() {
             }
         })
     }
+
 
     function normalizeSingerList(list) {
         let map = {
@@ -68,7 +70,7 @@ export function SingerList() {
     }, [])
     return (
         <div className='singer-list'>
-            <ListView data={singers}/>
+            <ListView data={singers} ref={scrollRef}/>
         </div>
     )
 }

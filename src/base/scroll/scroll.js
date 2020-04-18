@@ -7,12 +7,14 @@ import styles from './Scroll.module.scss'
 export class Scroll extends Component {
     constructor(props) {
         super(props);
-        this.children = props.children;
-        this.data= props.data;
         this.wrapperRef = createRef();
+        this.children = props.children;
+        this.data = props.data;
         this.probeType = props.probeType || 1;
         this.click = props.click || true;
         this.children = props.children;
+        this.listenScroll = !!props.listenScroll;
+        this.getPos = props.getPos;
     }
 
     componentDidMount() {
@@ -23,11 +25,23 @@ export class Scroll extends Component {
         if (!this.wrapperRef.current) {
             return
         }
-        // console.log(this.wrapperRef.current)
         this.scroll = new BScroll(this.wrapperRef.current, {
             probeType: this.probeType,
             click: this.click
         })
+        if (this.listenScroll && typeof this.getPos === 'function') {
+            this.scroll.on('scroll', (pos) => {
+                this.getPos(pos);
+            })
+        }
+    }
+
+    scrollTo() {
+        this.scroll && this.scroll.scrollTo.apply(this.scroll, arguments)
+    }
+
+    scrollToElement() {
+        this.scroll && this.scroll.scrollToElement.apply(this.scroll, arguments)
     }
 
     refresh() {
@@ -35,10 +49,13 @@ export class Scroll extends Component {
             this.scroll.refresh();
         }
     }
+    shouldComponentUpdate(nextProps, nextState, nextContext) {
+        return true
+    }
 
     render() {
         // console.log(this.props.data)
-        if(this.props.data !== this.data) {
+        if (this.props.data !== this.data) {
             this.initScroll();
             this.data = this.props.data
         }
