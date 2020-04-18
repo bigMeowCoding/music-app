@@ -166,7 +166,9 @@ export function ListView(props) {
                 <ul>
                     {
                         shortcutList.map((item, index) => {
-                            return <li data-index={index} className={`item${index === currentIndex ? ' current' : ''}`}>
+                            return <li
+                                key={index}
+                                data-index={index} className={`item${index === currentIndex ? ' current' : ''}`}>
                                 {item}
                             </li>
                         })
