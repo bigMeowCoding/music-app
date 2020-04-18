@@ -23,6 +23,7 @@ export class Scroll extends Component {
         if (!this.wrapperRef.current) {
             return
         }
+        // console.log(this.wrapperRef.current)
         this.scroll = new BScroll(this.wrapperRef.current, {
             probeType: this.probeType,
             click: this.click
@@ -30,13 +31,13 @@ export class Scroll extends Component {
     }
 
     refresh() {
-        console.log('refresh')
         if (this.scroll) {
             this.scroll.refresh();
         }
     }
 
     render() {
+        // console.log(this.props.data)
         if(this.props.data !== this.data) {
             this.initScroll();
             this.data = this.props.data

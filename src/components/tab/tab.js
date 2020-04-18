@@ -14,7 +14,7 @@ export function Tab() {
         },
         {
             label: '歌手',
-            path: '/singer',
+            path: '/singerList',
             type: 'singer'
         },
         {

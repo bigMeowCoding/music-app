@@ -9,7 +9,7 @@ import {
     Redirect,
 } from "react-router-dom";
 import {Recommend} from "./components/recommend/recommend";
-import {Singer} from "./components/singer/singer";
+import {SingerList} from "./components/singer-list/singer-list";
 import {Rank} from "./components/rank/rank";
 import {Search} from "./components/search/search";
 
@@ -26,8 +26,8 @@ function App() {
                     <Route path="/recommend">
                         <Recommend/>
                     </Route>
-                    <Route path="/singer">
-                        <Singer/>
+                    <Route path="/singerList">
+                        <SingerList/>
                     </Route>
                     <Route path="/rank">
                         <Rank/>
