@@ -1,5 +1,4 @@
 import React from 'react';
-import './common/styles/index.scss';
 import {MHeader} from "./components/m-header/m-header";
 import {Tab} from "./components/tab/tab";
 import {
