@@ -15,7 +15,6 @@ export function ListView(props) {
     const {data} = props, scrollRef = useRef(), fixedTitleRef = useRef();
     let [touch, setTouch] = useState({});
     let [diff, setDiff] = useState(-1);
-    // let [fixedTitle,setFixedTitle] = useState('');
     let [currentScrollY, setScrollY] = useState(-1);
     let [currentIndex, setCurrentIndex] = useState(-1);
     let [listHeight, setListHeight] = useState([])
@@ -44,7 +43,6 @@ export function ListView(props) {
 
     function computeCurrentIndex() {
         // 当滚动到顶部，newY>0
-        // console.log(currentScrollY)
         if (currentScrollY > 0) {
             setCurrentIndex(0)
             return
@@ -101,7 +99,6 @@ export function ListView(props) {
         e.preventDefault()
         let firstTouch = e.touches[0]
         touch.y2 = firstTouch.pageY
-        console.log(touch.y2);
         let delta = (touch.y2 - touch.y1) / ANCHOR_HEIGHT | 0
         let anchorIndex = parseInt(touch.anchorIndex) + delta
         _scrollTo(anchorIndex);
@@ -188,4 +185,4 @@ export function ListView(props) {
 
         </Scroll>
     )
-};
+}

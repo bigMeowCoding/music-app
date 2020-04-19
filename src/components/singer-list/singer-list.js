@@ -11,8 +11,6 @@ const HOT_NAME = '热门'
 
 export function SingerList() {
     let [singers, setSingers] = useState([]);
-    const scrollRef = useRef();
-
     function _getSingerList() {
         getSingerList().then((res) => {
             if (res.code === ERR_OK) {
@@ -20,7 +18,6 @@ export function SingerList() {
             }
         })
     }
-
 
     function normalizeSingerList(list) {
         let map = {
@@ -64,13 +61,12 @@ export function SingerList() {
         })
         return hot.concat(ret)
     }
-
     useEffect(() => {
         _getSingerList();
     }, [])
     return (
         <div className='singer-list'>
-            <ListView data={singers} ref={scrollRef}/>
+            <ListView data={singers}/>
         </div>
     )
 }
