@@ -9,9 +9,10 @@ import {
     Redirect,
 } from "react-router-dom";
 import {Recommend} from "./components/recommend/recommend";
-import {SingerList} from "./components/singer-list/singer-list";
+import SingerList from "./components/singer-list/singer-list";
 import {Rank} from "./components/rank/rank";
 import {Search} from "./components/search/search";
+import SingerDetail from "./components/singer-detail/singer-detail";
 
 function App() {
     return (
@@ -27,7 +28,14 @@ function App() {
                         <Recommend/>
                     </Route>
                     <Route path="/singerList">
-                        <SingerList/>
+                        <Switch>
+                            <Route exact path="/singerList">
+                                <SingerList/>
+                            </Route>
+                            <Route path="/singerList/:id">
+                                <SingerDetail/>
+                            </Route>
+                        </Switch>
                     </Route>
                     <Route path="/rank">
                         <Rank/>

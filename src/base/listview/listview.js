@@ -12,7 +12,7 @@ const TITLE_HEIGHT = 30
 
 export function ListView(props) {
     let timer = null;
-    const {data} = props, scrollRef = useRef(), fixedTitleRef = useRef();
+    const {data, selectItem} = props, scrollRef = useRef(), fixedTitleRef = useRef();
     let [touch, setTouch] = useState({});
     let [diff, setDiff] = useState(-1);
     let [currentScrollY, setScrollY] = useState(-1);
@@ -143,6 +143,9 @@ export function ListView(props) {
                                     {group.items.map((item) => {
                                         return (
                                             <li className="list-group-item"
+                                                onClick={() => {
+                                                    selectItem(item)
+                                                }}
                                                 key={item.id}>
                                                 {/*<LazyLoad>*/}
                                                 <img className="avatar" src={item.avatar}/>

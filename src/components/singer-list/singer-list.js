@@ -5,11 +5,16 @@ import {ERR_OK} from "../../api/config";
 import Singer from "../../common/js/Singer";
 import {ListView} from "../../base/listview/listview";
 import './singer-list.scss';
+import { useHistory } from "react-router-dom";
+import {setSinger} from "../../redux/actions";
+import {connect} from "react-redux";
 
 const HOT_SINGER_LEN = 10
 const HOT_NAME = '热门'
 
-export function SingerList() {
+ function SingerList(props) {
+    let history = useHistory();
+    let {setSinger} = props
     let [singers, setSingers] = useState([]);
     function _getSingerList() {
         getSingerList().then((res) => {
@@ -64,9 +69,19 @@ export function SingerList() {
     useEffect(() => {
         _getSingerList();
     }, [])
+    function selectItem(singer) {
+        setSinger(singer)
+        history.push(`/singerList/${singer.id}`)
+    }
     return (
         <div className='singer-list'>
-            <ListView data={singers}/>
+            <ListView data={singers} selectItem = {selectItem}/>
         </div>
     )
 }
+
+
+export default connect(
+    null,
+    { setSinger }
+)(SingerList);
