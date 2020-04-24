@@ -13,13 +13,17 @@ const HOT_SINGER_LEN = 10
 const HOT_NAME = '热门'
 
  function SingerList(props) {
-    let history = useHistory();
-    let {setSinger} = props
+     let {setSinger} = props
     let [singers, setSingers] = useState([]);
-    function _getSingerList() {
+     useEffect(() => {
+         _getSingerList();
+     }, [])
+     let history = useHistory();
+     console.log('singerlist')
+     function _getSingerList() {
         getSingerList().then((res) => {
             if (res.code === ERR_OK) {
-                setSingers(normalizeSingerList(res.data.list));
+                // setSingers(normalizeSingerList(res.data.list));
             }
         })
     }
@@ -66,9 +70,7 @@ const HOT_NAME = '热门'
         })
         return hot.concat(ret)
     }
-    useEffect(() => {
-        _getSingerList();
-    }, [])
+
     function selectItem(singer) {
         setSinger(singer)
         history.push(`/singerList/${singer.id}`)

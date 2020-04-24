@@ -14,6 +14,11 @@ export function Recommend() {
     let [recommends, setRecommends] = useState([]);
     let [discList, setDiscList] = useState([]);
     const scrollRef = useRef();
+
+    useEffect(() => {
+        _getRecommend();
+        _getDiscList();
+    }, []);
     let carouselIsNotLoaded = true;
 
     function _getRecommend() {
@@ -34,11 +39,6 @@ export function Recommend() {
         })
     }
 
-    useEffect(() => {
-        _getRecommend();
-        _getDiscList();
-
-    }, []);
 
     function carouselLoaded() {
         const scroll = scrollRef.current;
