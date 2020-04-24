@@ -99,7 +99,7 @@ export function MusicList(props) {
                         getPos={getScrollPos}
                         listenScroll={listenScroll} probeType={probeType}>
                     <div className="song-list-wrapper">
-                        <SongList songs={songs}/>
+                        <SongList songs={songs} selectSongItem = {}/>
                     </div>
                     {
                         !songs.length ? <div className="loading-container">

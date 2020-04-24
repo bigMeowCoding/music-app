@@ -2,8 +2,7 @@ import * as React from "react";
 
 import {Scroll} from "../scroll/scroll";
 import './listview.scss'
-import LazyLoad from "react-lazy-load";
-import {createRef, useCallback, useEffect, useMemo, useRef, useState} from "react";
+import {createRef, useEffect, useMemo, useRef, useState} from "react";
 import {getData} from "../../common/js/dom";
 import {Loading} from "../loading/loading";
 
