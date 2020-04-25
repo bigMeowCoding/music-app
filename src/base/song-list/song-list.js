@@ -2,7 +2,7 @@ import React from "react";
 import './song-list.scss'
 
 export function SongList(props) {
-    let {songs,selectSongItem} = props;
+    let {songs, selectSongItem} = props;
 
     function getDesc(song) {
         return `${song.singer}·${song.album}`
@@ -14,8 +14,8 @@ export function SongList(props) {
                 {
                     songs.map((song, index) => {
                         return <li className="item" onClick={() => {
-                            if(typeof selectSongItem === 'function') {
-                                selectSongItem(item, index);
+                            if (typeof selectSongItem === 'function') {
+                                selectSongItem(song, index);
                             }
                         }} key={index}>
                             <div className="content">
@@ -30,3 +30,5 @@ export function SongList(props) {
         </div>
     )
 }
+
+

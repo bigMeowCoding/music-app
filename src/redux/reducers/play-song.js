@@ -1,13 +1,19 @@
 import * as types from '../actionTypes'
 
 export default function (state = {}, action) {
+    console.log(action)
     switch (action.type) {
         case types.SET_SEQUENCE_LIST:
-            state.sequenceList = action.songList;
-            return state;
+            return {
+                ...state,
+                sequenceList: action.songList
+            };
         case types.SET_PLAYLIST:
-            state.playList = action.songList;
-            return state;
+            return {
+                ...state,
+                playList: action.songLists
+
+            };
         case types.SET_CURRENT_INDEX:
             state.currentIndex = action.index;
             return state;

@@ -19,11 +19,10 @@ const HOT_NAME = '热门'
          _getSingerList();
      }, [])
      let history = useHistory();
-     console.log('singerlist')
      function _getSingerList() {
         getSingerList().then((res) => {
             if (res.code === ERR_OK) {
-                // setSingers(normalizeSingerList(res.data.list));
+                setSingers(normalizeSingerList(res.data.list));
             }
         })
     }

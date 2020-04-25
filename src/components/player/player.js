@@ -1,9 +1,11 @@
 import React from "react";
 import {Scroll} from "../../base/scroll/scroll";
+import {connect} from "react-redux";
 
-export function Player() {
-    return (
-        <div className="player">
+function Player(props) {
+    let {playList,currentIndex} = props;
+    if (playList.length > 0) {
+        return <div className="player">
             <div className="normal-player">
                 <div className="background">
                     <img width="100%" height="100%" src="" alt=""/>
@@ -83,5 +85,25 @@ export function Player() {
                 </div>
             </div>
         </div>
-    )
+    } else {
+        return <div>{currentIndex}</div>
+    }
 }
+
+const mapStateToProps = state => {
+
+    const playList = (state.playSong && state.playSong.playList) || [];
+    const currentIndex = (state.playSong && state.playSong.currentIndex) || -1;
+
+    // console.log(playList)
+
+    return {
+        playList,
+        currentIndex
+    };
+};
+export default connect(
+    mapStateToProps,
+    null
+)(Player)
+

@@ -4,6 +4,7 @@ import {getSingerDetail} from "../../api/singer";
 import {ERR_OK} from "../../api/config";
 import {useHistory} from "react-router-dom";
 import {createSong} from "../../common/js/song";
+import {setCurrentIndex, setFullScreen, setPlayingState, setPlayList, setSequenceList} from "../../redux/actions";
 import {MusicList} from "../music-list/music-list";
 
 function SingerDetail(props) {
@@ -48,15 +49,30 @@ function SingerDetail(props) {
         return ret
     }
 
+    function selectSongItem(song, index) {
+        props.setCurrentIndex(index);
+        props.setSequenceList(songs);
+        props.setPlayList(songs);
+        // setPlayingState(true);
+        // setFullScreen(true);
+    }
+
     return <div>
-        <MusicList title={title} bgImage={bgImage} songs={songs}/>
+        <MusicList title={title} bgImage={bgImage} songs={songs} selectSongItem={selectSongItem}/>
     </div>
 }
 
 const mapStateToProps = state => {
+    console.log(state)
     return {
         singer: state.singerDetail.singer
     };
 };
 
-export default connect(mapStateToProps)(SingerDetail);
+export default connect(mapStateToProps, {
+    setPlayList,
+    setSequenceList,
+    setCurrentIndex,
+    setFullScreen,
+    setPlayingState
+})(SingerDetail);

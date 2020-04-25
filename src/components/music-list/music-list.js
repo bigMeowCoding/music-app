@@ -11,7 +11,10 @@ const transform = prefixStyle('transform')
 const backdrop = prefixStyle('backdrop-filter')
 
 export function MusicList(props) {
-    let {title, bgImage, songs} = props;
+    let {
+        title, bgImage, songs,
+        selectSongItem
+    } = props;
     let [scrollY, setScrollY] = useState(0);
     let [minTranslateY, setMinTranslateY] = useState(0);
     const bgImageRef = useRef(),
@@ -76,6 +79,7 @@ export function MusicList(props) {
         setScrollY(pos.y);
     }
 
+
     return (
         <div className="music-list">
             <div className="back" onClick={back}>
@@ -99,7 +103,7 @@ export function MusicList(props) {
                         getPos={getScrollPos}
                         listenScroll={listenScroll} probeType={probeType}>
                     <div className="song-list-wrapper">
-                        <SongList songs={songs} selectSongItem = {}/>
+                        <SongList songs={songs} selectSongItem={selectSongItem}/>
                     </div>
                     {
                         !songs.length ? <div className="loading-container">
@@ -113,3 +117,4 @@ export function MusicList(props) {
         </div>
     )
 }
+
