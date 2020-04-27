@@ -1,14 +1,17 @@
 import React from "react";
 import {Scroll} from "../../base/scroll/scroll";
 import {connect} from "react-redux";
+import './player.scss';
 
 function Player(props) {
-    let {playList,currentIndex} = props;
+    let {playList, currentIndex, sequenceList} = props;
+    const currentSong = sequenceList[currentIndex] || {};
+    console.log(currentSong)
     if (playList.length > 0) {
         return <div className="player">
             <div className="normal-player">
                 <div className="background">
-                    <img width="100%" height="100%" src="" alt=""/>
+                    <img width="100%" height="100%" src={currentSong.image} alt=""/>
                 </div>
                 <div className="top">
                     <div className="back">
@@ -21,7 +24,7 @@ function Player(props) {
                     <div className="middle-l">
                         <div className="cd-wrapper">
                             <div className="cd">
-                                <img className="image"/>
+                                <img className="image" src={currentSong.image}/>
                             </div>
                         </div>
                         <div className="playing-lyric-wrapper">
@@ -86,7 +89,7 @@ function Player(props) {
             </div>
         </div>
     } else {
-        return <div>{currentIndex}</div>
+        return <></>
     }
 }
 
@@ -94,12 +97,12 @@ const mapStateToProps = state => {
 
     const playList = (state.playSong && state.playSong.playList) || [];
     const currentIndex = (state.playSong && state.playSong.currentIndex) || -1;
-
-    // console.log(playList)
+    const sequenceList = (state.playSong && state.playSong.sequenceList) || [];
 
     return {
         playList,
-        currentIndex
+        currentIndex,
+        sequenceList
     };
 };
 export default connect(

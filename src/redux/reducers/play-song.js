@@ -11,21 +11,28 @@ export default function (state = {}, action) {
         case types.SET_PLAYLIST:
             return {
                 ...state,
-                playList: action.songLists
-
+                playList: action.songList
             };
         case types.SET_CURRENT_INDEX:
-            state.currentIndex = action.index;
-            return state;
+            return {
+                ...state,
+                currentIndex: action.index
+            };
         case types.SET_FULL_SCREEN:
-            state.fullScreen = action.fullScreen;
-            return state;
+            return {
+                ...state,
+                fullScreen: action.fullScreen
+            };
         case types.SET_PLAY_MODE:
-            state.mode = action.mode;
-            return state;
+            return {
+                ...state,
+                mode: action.mode
+            };
         case types.SET_PLAYING_STATE:
-            state.playing = action.playing;
-            return state;
+            return {
+                ...state,
+                playing: action.playing
+            };
         default: {
             return state;
         }
