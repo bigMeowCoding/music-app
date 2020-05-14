@@ -1,7 +1,6 @@
 import * as types from '../actionTypes'
 
 export default function (state = {}, action) {
-    console.log(action)
     switch (action.type) {
         case types.SET_SEQUENCE_LIST:
             return {
@@ -19,6 +18,7 @@ export default function (state = {}, action) {
                 currentIndex: action.index
             };
         case types.SET_FULL_SCREEN:
+            console.log(action.fullScreen)
             return {
                 ...state,
                 fullScreen: action.fullScreen

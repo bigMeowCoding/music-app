@@ -53,8 +53,8 @@ function SingerDetail(props) {
         props.setCurrentIndex(index);
         props.setSequenceList(songs);
         props.setPlayList(songs);
-        // setPlayingState(true);
-        // setFullScreen(true);
+        props.setPlayingState(true);
+        props.setFullScreen(true);
     }
 
     return <div>
@@ -63,7 +63,6 @@ function SingerDetail(props) {
 }
 
 const mapStateToProps = state => {
-    console.log(state)
     return {
         singer: state.singerDetail.singer
     };
