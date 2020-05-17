@@ -8,7 +8,6 @@ function Player(props) {
     let {playList, fullScreen, currentIndex, sequenceList, setFullScreen, setPlayingState, playing} = props;
     const currentSong = sequenceList && sequenceList[currentIndex] || {};
     const audioRef = useRef();
-    console.log('playing',playing)
     useEffect(() => {
         if (currentSong && audioRef.current) {
             audioRef.current.play()
@@ -117,7 +116,7 @@ function Player(props) {
                         </p>
                     </div>
                     <div className="control">
-                        <i className="icon-mini"></i>
+                        <i className={`${playing ? 'icon-pause-mini' : 'icon-play-mini'}`}></i>
                     </div>
                     <div className="control">
                         <i className="icon-playlist"></i>
