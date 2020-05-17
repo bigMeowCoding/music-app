@@ -1,6 +1,16 @@
 @import "../../common/styles/mixin";
 @import "../../common/styles/variable";
 
+@keyframes rotate {
+  0% {
+    transform: rotate(0);
+  }
+  100% {
+
+    transform: rotate(360deg);
+  }
+}
+
 .player {
   .normal-player {
     position: fixed;
