@@ -2,14 +2,20 @@ import React, {useCallback, useEffect, useRef, useState} from "react";
 import {Scroll} from "../../base/scroll/scroll";
 import {connect} from "react-redux";
 import './player.scss';
-import {setFullScreen, setPlayingState} from "../../redux/actions";
+import {setCurrentIndex, setFullScreen, setPlayingState} from "../../redux/actions";
 
 function Player(props) {
-    let {playList, fullScreen, currentIndex, sequenceList, setFullScreen, setPlayingState, playing} = props;
+    let {
+        playList, fullScreen, currentIndex, sequenceList,
+        setFullScreen, setPlayingState,
+        setCurrentIndex,
+        playing
+    } = props;
+    let [songReady, setSongReady] = useState(false); // audio可以播放歌曲了
     const currentSong = sequenceList && sequenceList[currentIndex] || {};
     const audioRef = useRef();
     useEffect(() => {
-        if (currentSong && audioRef.current) {
+        if (currentSong && audioRef.current && playing) {
             audioRef.current.play()
         }
     }, [currentSong]);
@@ -31,10 +37,55 @@ function Player(props) {
         setFullScreen(true);
     }
 
+    function playSongIfPause() {
+        if (!playing) {
+            togglePlaying();
+        }
+    }
+
+    function next() {
+        if (!songReady) {
+            return;
+        }
+        if (currentIndex === playList.length - 1) {
+            setCurrentIndex(0)
+        } else {
+            setCurrentIndex(currentIndex + 1);
+        }
+        playSongIfPause();
+        waitSongLoad();
+    }
+
+    function waitSongLoad() {
+        setSongReady(false);
+    }
+
+    function prev() {
+        if (!songReady) {
+            return;
+        }
+        if (currentIndex === 0) {
+            setCurrentIndex(playList.length - 1);
+        } else {
+            setCurrentIndex(currentIndex - 1);
+        }
+        playSongIfPause()
+        waitSongLoad();
+    }
 
     function togglePlaying(e) {
         setPlayingState(!playing);
-        e.stopPropagation();
+        if (e) {
+            e.stopPropagation();
+        }
+    }
+
+    function canPlayHandle() {
+        setSongReady(true);
+    }
+
+    function audioErrorHandle() {
+        songReady = true;
     }
 
     if (playList && playList.length > 0) {
@@ -45,7 +96,7 @@ function Player(props) {
                     </div>
                     <div className="top">
                         <div className="back">
-                            <i className="icon-back" onClick={back}></i>
+                            <i className='icon-back' onClick={back}></i>
                         </div>
                         <h1 className="title">
                             {currentSong.name}
@@ -89,14 +140,16 @@ function Player(props) {
                             <div className="icon i-left">
                                 <i></i>
                             </div>
-                            <div className="icon i-left">
-                                <i className="icon-prev"></i>
+
+                            <div>{songReady}</div>
+                            <div className={"icon i-left " + `${songReady ? '' : 'disable'}`}>
+                                <i className='icon-prev' onClick={prev}></i>
                             </div>
-                            <div className="icon i-center">
+                            <div className={"icon i-center " + `${songReady ? '' : 'disable'}`}>
                                 <i onClick={togglePlaying} className={playing ? 'icon-pause' : 'icon-play'}></i>
                             </div>
-                            <div className="icon i-right">
-                                <i className={'icon-next'}></i>
+                            <div className={"icon i-right " + `${songReady ? '' : 'disable'}`}>
+                                <i className='icon-next ' onClick={next}></i>
                             </div>
                             <div className="icon i-right">
                                 <i className="icon icon-not-favorite"></i>
@@ -106,7 +159,8 @@ function Player(props) {
                 </div>
                 : <div className="mini-player" onClick={open}>
                     <div className="icon">
-                        <img className={`${playing ? 'play' : 'play pause'}`} src={currentSong.image} width="40" height="40"/>
+                        <img className={`${playing ? 'play' : 'play pause'}`} src={currentSong.image} width="40"
+                             height="40"/>
                     </div>
                     <div className="text">
                         <h2 className="name">
@@ -124,7 +178,7 @@ function Player(props) {
                     </div>
                 </div>
             }
-            <audio ref={audioRef} src={currentSong.url}/>
+            <audio ref={audioRef} src={currentSong.url} onError={audioErrorHandle} onCanPlay={canPlayHandle}/>
         </div>
     } else {
         return <></>
@@ -145,7 +199,8 @@ export default connect(
     mapStateToProps,
     {
         setFullScreen,
-        setPlayingState
+        setPlayingState,
+        setCurrentIndex
     }
 )(Player)
 
