@@ -12,6 +12,7 @@ function Player(props) {
         playing
     } = props;
     let [songReady, setSongReady] = useState(false); // audio可以播放歌曲了
+    let [currentTime, setCurrentTime] = useState(null);
     const currentSong = sequenceList && sequenceList[currentIndex] || {};
     const audioRef = useRef();
     useEffect(() => {
@@ -88,6 +89,26 @@ function Player(props) {
         songReady = true;
     }
 
+    function timeUpdateHandle(e) {
+        setCurrentTime(e.target.currentTime);
+    }
+
+    function format(interval) {
+        interval = interval | 0
+        const minute = interval / 60 | 0
+        const second = _pad(interval % 60)
+        return `${minute}:${second}`
+    }
+
+    function _pad(num, n = 2) {
+        let len = num.toString().length
+        while (len < n) {
+            num = '0' + num
+            len++
+        }
+        return num
+    }
+
     if (playList && playList.length > 0) {
         return <div className="player">
             {fullScreen ? <div className="normal-player">
@@ -130,18 +151,23 @@ function Player(props) {
                             <span className="dot"></span>
                         </div>
                         <div className="progress-wrapper">
-                            <span className="time time-l"></span>
+                            <span className="time time-l">
+                                {format(currentTime)}
+                            </span>
                             <div className="progress-bar-wrapper">
                                 {/*<progress-bar ></progress-bar>*/}
                             </div>
-                            <span className="time time-r"></span>
+                            <span className="time time-r">
+                                {format(
+                                    currentSong && currentSong.duration
+                                )}
+                            </span>
                         </div>
                         <div className="operators">
                             <div className="icon i-left">
                                 <i></i>
                             </div>
 
-                            <div>{songReady}</div>
                             <div className={"icon i-left " + `${songReady ? '' : 'disable'}`}>
                                 <i className='icon-prev' onClick={prev}></i>
                             </div>
@@ -178,7 +204,8 @@ function Player(props) {
                     </div>
                 </div>
             }
-            <audio ref={audioRef} src={currentSong.url} onError={audioErrorHandle} onCanPlay={canPlayHandle}/>
+            <audio ref={audioRef} src={currentSong.url} onTimeUpdate={timeUpdateHandle} onError={audioErrorHandle}
+                   onCanPlay={canPlayHandle}/>
         </div>
     } else {
         return <></>
