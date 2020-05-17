@@ -18,7 +18,6 @@ export default function (state = {}, action) {
                 currentIndex: action.index
             };
         case types.SET_FULL_SCREEN:
-            console.log(action.fullScreen)
             return {
                 ...state,
                 fullScreen: action.fullScreen

@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useCallback, useEffect, useRef, useState} from "react";
 import {Scroll} from "../../base/scroll/scroll";
 import {connect} from "react-redux";
 import './player.scss';
@@ -6,7 +6,16 @@ import {setFullScreen} from "../../redux/actions";
 
 function Player(props) {
     let {playList, fullScreen, currentIndex, sequenceList, setFullScreen} = props;
-    const currentSong = (sequenceList && sequenceList[currentIndex]) || {};
+    const currentSong = sequenceList && sequenceList[currentIndex] || {};
+    const audioRef = useRef();
+
+    useEffect(() => {
+        console.log(audioRef, currentSong)
+        if (currentSong && audioRef.current) {
+            audioRef.current.play()
+        }
+    }, [currentSong])
+
     function back() {
         setFullScreen(false);
     }
@@ -14,6 +23,7 @@ function Player(props) {
     function open() {
         setFullScreen(true);
     }
+
 
     if (playList && playList.length > 0) {
         return <div className="player">
@@ -102,6 +112,7 @@ function Player(props) {
                     </div>
                 </div>
             }
+            <audio ref={audioRef} src={currentSong.url}/>
         </div>
     } else {
         return <></>

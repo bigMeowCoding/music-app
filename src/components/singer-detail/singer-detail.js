@@ -3,7 +3,7 @@ import {connect} from "react-redux";
 import {getSingerDetail} from "../../api/singer";
 import {ERR_OK} from "../../api/config";
 import {useHistory} from "react-router-dom";
-import {createSong} from "../../common/js/song";
+import {createSong, processSongsUrl} from "../../common/js/song";
 import {setCurrentIndex, setFullScreen, setPlayingState, setPlayList, setSequenceList} from "../../redux/actions";
 import {MusicList} from "../music-list/music-list";
 
@@ -33,7 +33,11 @@ function SingerDetail(props) {
         }
         getSingerDetail(singer.id).then((res) => {
             if (res.code === ERR_OK) {
-                setSongs(_normalizeSongs(res.data.list));
+                processSongsUrl(_normalizeSongs(res.data.list)).then((songs) => {
+                    setSongs(songs);
+                }, (error) => {
+                    console.error(error)
+                });
             }
         })
     }, []);
