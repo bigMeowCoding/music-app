@@ -32,8 +32,9 @@ function Player(props) {
     }
 
 
-    function togglePlaying() {
-        setPlayingState(!playing)
+    function togglePlaying(e) {
+        setPlayingState(!playing);
+        e.stopPropagation();
     }
 
     if (playList && playList.length > 0) {
@@ -56,7 +57,7 @@ function Player(props) {
                     <div className="middle">
                         <div className="middle-l">
                             <div className="cd-wrapper">
-                                <div className="cd">
+                                <div className={`cd ${playing ? 'play' : 'play pause'}`}>
                                     <img className="image" src={currentSong.image}/>
                                 </div>
                             </div>
@@ -105,7 +106,7 @@ function Player(props) {
                 </div>
                 : <div className="mini-player" onClick={open}>
                     <div className="icon">
-                        <img src={currentSong.image} width="40" height="40"/>
+                        <img className={`${playing ? 'play' : 'play pause'}`} src={currentSong.image} width="40" height="40"/>
                     </div>
                     <div className="text">
                         <h2 className="name">
@@ -116,7 +117,7 @@ function Player(props) {
                         </p>
                     </div>
                     <div className="control">
-                        <i className={`${playing ? 'icon-pause-mini' : 'icon-play-mini'}`}></i>
+                        <i onClick={togglePlaying} className={`${playing ? 'icon-pause-mini' : 'icon-play-mini'}`}></i>
                     </div>
                     <div className="control">
                         <i className="icon-playlist"></i>
