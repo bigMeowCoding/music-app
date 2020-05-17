@@ -30,7 +30,7 @@ export default function (state = {}, action) {
         case types.SET_PLAYING_STATE:
             return {
                 ...state,
-                playing: action.playing
+                playing: action.isPlaying
             };
         default: {
             return state;

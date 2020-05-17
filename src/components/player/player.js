@@ -2,19 +2,27 @@ import React, {useCallback, useEffect, useRef, useState} from "react";
 import {Scroll} from "../../base/scroll/scroll";
 import {connect} from "react-redux";
 import './player.scss';
-import {setFullScreen} from "../../redux/actions";
+import {setFullScreen, setPlayingState} from "../../redux/actions";
 
 function Player(props) {
-    let {playList, fullScreen, currentIndex, sequenceList, setFullScreen} = props;
+    let {playList, fullScreen, currentIndex, sequenceList, setFullScreen, setPlayingState, playing} = props;
     const currentSong = sequenceList && sequenceList[currentIndex] || {};
     const audioRef = useRef();
-
+    console.log('playing',playing)
     useEffect(() => {
-        console.log(audioRef, currentSong)
         if (currentSong && audioRef.current) {
             audioRef.current.play()
         }
-    }, [currentSong])
+    }, [currentSong]);
+    useEffect(() => {
+        if (audioRef.current) {
+            if (playing) {
+                audioRef.current.play();
+            } else {
+                audioRef.current.pause();
+            }
+        }
+    }, [playing])
 
     function back() {
         setFullScreen(false);
@@ -24,6 +32,10 @@ function Player(props) {
         setFullScreen(true);
     }
 
+
+    function togglePlaying() {
+        setPlayingState(!playing)
+    }
 
     if (playList && playList.length > 0) {
         return <div className="player">
@@ -81,10 +93,10 @@ function Player(props) {
                                 <i className="icon-prev"></i>
                             </div>
                             <div className="icon i-center">
-                                <i></i>
+                                <i onClick={togglePlaying} className={playing ? 'icon-pause' : 'icon-play'}></i>
                             </div>
                             <div className="icon i-right">
-                                <i></i>
+                                <i className={'icon-next'}></i>
                             </div>
                             <div className="icon i-right">
                                 <i className="icon icon-not-favorite"></i>
@@ -120,18 +132,20 @@ function Player(props) {
 }
 
 const mapStateToProps = state => {
-    const {playList, currentIndex, sequenceList, fullScreen} = state.playSong;
+    const {playList, currentIndex, sequenceList, fullScreen, playing} = state.playSong;
     return {
         playList,
         currentIndex,
         sequenceList,
-        fullScreen
+        fullScreen,
+        playing
     };
 };
 export default connect(
     mapStateToProps,
     {
-        setFullScreen
+        setFullScreen,
+        setPlayingState
     }
 )(Player)
 
