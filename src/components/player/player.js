@@ -3,6 +3,7 @@ import {Scroll} from "../../base/scroll/scroll";
 import {connect} from "react-redux";
 import './player.scss';
 import {setCurrentIndex, setFullScreen, setPlayingState} from "../../redux/actions";
+import {ProgressBar} from "../../base/progress-bar/progress-bar";
 
 function Player(props) {
     let {
@@ -15,6 +16,7 @@ function Player(props) {
     let [currentTime, setCurrentTime] = useState(null);
     const currentSong = sequenceList && sequenceList[currentIndex] || {};
     const audioRef = useRef();
+    const [songPercent, setSongPercent] = useState(0);
     useEffect(() => {
         if (currentSong && audioRef.current && playing) {
             audioRef.current.play()
@@ -29,6 +31,9 @@ function Player(props) {
             }
         }
     }, [playing])
+    useEffect(() => {
+        setSongPercent(currentTime / currentSong.duration);
+    }, [currentTime]);
 
     function back() {
         setFullScreen(false);
@@ -155,7 +160,7 @@ function Player(props) {
                                 {format(currentTime)}
                             </span>
                             <div className="progress-bar-wrapper">
-                                {/*<progress-bar ></progress-bar>*/}
+                                <ProgressBar percent={songPercent}/>
                             </div>
                             <span className="time time-r">
                                 {format(
