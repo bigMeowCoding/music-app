@@ -23,6 +23,15 @@ export function ProgressBar(props) {
         }
     }
 
+    function progressClick(e) {
+        const rect = progressBarRef.current.getBoundingClientRect();
+        const offsetWidth = e.pageX - rect.left;
+        _offset(offsetWidth);
+        if (typeof progressBarChang === 'function') {
+            progressBarChang(_getPercent())
+        }
+    }
+
     function touchStartHandle(e) {
         setTouch({
             initiated: true,
@@ -56,7 +65,9 @@ export function ProgressBar(props) {
     }
 
     return (
-        <div className='progress-bar' ref={progressBarRef}>
+        <div className='progress-bar'
+             onClick={progressClick}
+             ref={progressBarRef}>
             <div className="bar-inner">
                 <div className="progress" ref={progressRef}></div>
                 <div className="progress-btn-wrapper" onTouchStart={touchStartHandle}
