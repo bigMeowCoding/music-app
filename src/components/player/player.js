@@ -113,6 +113,14 @@ function Player(props) {
         }
         return num
     }
+    function progressBarChangHandle(percent) {
+        const time =currentSong.duration * percent
+        setCurrentTime(time);
+        audioRef.current.currentTime = time;
+        if(!playing) {
+            togglePlaying()
+        }
+    }
 
     if (playList && playList.length > 0) {
         return <div className="player">
@@ -160,7 +168,7 @@ function Player(props) {
                                 {format(currentTime)}
                             </span>
                             <div className="progress-bar-wrapper">
-                                <ProgressBar percent={songPercent}/>
+                                <ProgressBar percent={songPercent} progressBarChang={progressBarChangHandle}/>
                             </div>
                             <span className="time time-r">
                                 {format(
