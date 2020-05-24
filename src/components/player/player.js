@@ -4,6 +4,7 @@ import {connect} from "react-redux";
 import './player.scss';
 import {setCurrentIndex, setFullScreen, setPlayingState} from "../../redux/actions";
 import {ProgressBar} from "../../base/progress-bar/progress-bar";
+import {ProgressCircle} from "../../base/progress-circle/progress-circle";
 
 function Player(props) {
     let {
@@ -113,11 +114,12 @@ function Player(props) {
         }
         return num
     }
+
     function progressBarChangHandle(percent) {
-        const time =currentSong.duration * percent
+        const time = currentSong.duration * percent
         setCurrentTime(time);
         audioRef.current.currentTime = time;
-        if(!playing) {
+        if (!playing) {
             togglePlaying()
         }
     }
@@ -130,7 +132,7 @@ function Player(props) {
                     </div>
                     <div className="top">
                         <div className="back">
-                            <i className='icon-back' onClick={back}></i>
+                            <i className='icon-back' onClick={back}/>
                         </div>
                         <h1 className="title">
                             {currentSong.name}
@@ -210,11 +212,14 @@ function Player(props) {
                         </p>
                     </div>
                     <div className="control">
-                        <i onClick={togglePlaying} className={`${playing ? 'icon-pause-mini' : 'icon-play-mini'}`}></i>
+                        <ProgressCircle percent = {songPercent} radius={32} >
+                            <i onClick={togglePlaying} className={"icon-mini " + `${playing ? 'icon-pause-mini' : 'icon-play-mini'}`}></i>
+
+                        </ProgressCircle>
                     </div>
-                    <div className="control">
-                        <i className="icon-playlist"></i>
-                    </div>
+                    <div className="control" >
+                    <i className="icon-playlist"></i>
+                </div>
                 </div>
             }
             <audio ref={audioRef} src={currentSong.url} onTimeUpdate={timeUpdateHandle} onError={audioErrorHandle}
