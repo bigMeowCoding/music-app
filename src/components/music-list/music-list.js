@@ -13,7 +13,8 @@ const backdrop = prefixStyle('backdrop-filter')
 export function MusicList(props) {
     let {
         title, bgImage, songs,
-        selectSongItem
+        selectSongItem,
+        randomPlayAll
     } = props;
     let [scrollY, setScrollY] = useState(0);
     let [minTranslateY, setMinTranslateY] = useState(0);
@@ -79,6 +80,9 @@ export function MusicList(props) {
         setScrollY(pos.y);
     }
 
+    function randomClickHandle() {
+        randomPlayAll(songs);
+    }
 
     return (
         <div className="music-list">
@@ -90,7 +94,7 @@ export function MusicList(props) {
             </h1>
             <div className="bg-image" ref={bgImageRef}>
                 <div className="play-wrapper">
-                    <div className="play" ref={playBtnRef}>
+                    <div className="play" ref={playBtnRef} onClick={randomClickHandle}>
                         <i className="icon-play"/>
                         <span className="text">随机播放全部</span>
                     </div>

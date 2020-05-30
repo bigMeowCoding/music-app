@@ -4,11 +4,20 @@ import {getSingerDetail} from "../../api/singer";
 import {ERR_OK} from "../../api/config";
 import {useHistory} from "react-router-dom";
 import {createSong, processSongsUrl} from "../../common/js/song";
-import {setCurrentIndex, setFullScreen, setPlayingState, setPlayList, setSequenceList} from "../../redux/actions";
+import {
+    setCurrentIndex,
+    setFullScreen,
+    setPlayingMode,
+    setPlayingState,
+    setPlayList,
+    setSequenceList
+} from "../../redux/actions";
 import {MusicList} from "../music-list/music-list";
+import {playMode} from "../../common/js/config";
+import {shuffle} from "../../common/js/utils";
 
 function SingerDetail(props) {
-    let {singer} = props;
+    let {singer, mode} = props;
 
     let history = useHistory();
 
@@ -52,23 +61,45 @@ function SingerDetail(props) {
         })
         return ret
     }
-
+    function findIndex(list, song) {
+        return list.findIndex((item) => {
+            return item.id === song.id
+        })
+    }
     function selectSongItem(song, index) {
-        props.setCurrentIndex(index);
         props.setSequenceList(songs);
-        props.setPlayList(songs);
+        if (mode === playMode.random) {
+            const randomList = shuffle(songs)
+            props.setPlayList(randomList);
+            props.setCurrentIndex(findIndex(randomList, songs[index]));
+        } else {
+            props.setPlayList(songs);
+            props.setCurrentIndex(index);
+        }
+        props.setPlayingState(true);
+        props.setFullScreen(true);
+    }
+
+    function randomPlayAll(songList) {
+        props.setPlayingMode(playMode.random);
+        props.setSequenceList(songList);
+        props.setPlayList(shuffle(songList));
+        props.setCurrentIndex(0);
         props.setPlayingState(true);
         props.setFullScreen(true);
     }
 
     return <div>
-        <MusicList title={title} bgImage={bgImage} songs={songs} selectSongItem={selectSongItem}/>
+        <MusicList title={title} bgImage={bgImage}
+                   randomPlayAll={randomPlayAll}
+                   songs={songs} selectSongItem={selectSongItem}/>
     </div>
 }
 
 const mapStateToProps = state => {
     return {
-        singer: state.singerDetail.singer
+        singer: state.singerDetail.singer,
+        mode: state.playSong.mode
     };
 };
 
@@ -77,5 +108,6 @@ export default connect(mapStateToProps, {
     setSequenceList,
     setCurrentIndex,
     setFullScreen,
-    setPlayingState
+    setPlayingState,
+    setPlayingMode
 })(SingerDetail);

@@ -28,7 +28,6 @@ function Player(props) {
         }
         const iconMode = mode === playMode.sequence ? 'icon-sequence'
             : mode === playMode.loop ? 'icon-loop' : 'icon-random';
-
         setIconMode(iconMode);
     }, [mode])
     useEffect(() => {
