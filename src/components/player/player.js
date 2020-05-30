@@ -23,7 +23,7 @@ function Player(props) {
         playing, mode, setPlayList
     } = props;
     let [songReady, setSongReady] = useState(false); // audio可以播放歌曲了
-    let currentLyric = null;
+    let [currentLyric, setCurrentLyric] = useState();
     let [lines, setLines] = useState([]);
     let [currentTime, setCurrentTime] = useState(null);
     const [iconMode, setIconMode] = useState(null);
@@ -38,6 +38,55 @@ function Player(props) {
 
     const [songPercent, setSongPercent] = useState(0);
     const [lineRefGroup, setLineRefGroup] = useState([]);
+    const getLyric = useCallback(() => {
+        if (currentSong && currentSong.getLyric) {
+            if (currentLyric) {
+                currentLyric.stop();
+                console.log('stop')
+            }
+            currentSong.getLyric().then((lyric) => {
+                let lineRefGroup = null;
+
+                const newLyric = new Lyric(lyric, ({lineNum, txt}) => {
+                    setCurrentLineNum(lineNum)
+
+                    if (lineNum > LYRIC_LINES) {
+                        let lineEl = lineRefGroup[lineNum - LYRIC_LINES].current
+                        lyricRef.current.scrollToElement(lineEl, 0)
+                    } else {
+                        lyricRef.current.scrollToElement(0, 0, 1000)
+                    }
+                    // this.playingLyric = txt
+                });
+                setCurrentLyric(newLyric);
+                lineRefGroup = newLyric.lines.map(() => {
+                    return createRef()
+                })
+                setLines(newLyric.lines);
+                setLineRefGroup(lineRefGroup)
+
+                if (playing) {
+                    newLyric.play()
+                }
+            }).catch(() => {
+                setCurrentLyric(null);
+                // this.playingLyric = ''
+                setCurrentLineNum(0);
+            })
+        }
+
+    }, [currentSong, currentLyric])
+    const playSongIfPause = useCallback(() => {
+        if (!playing) {
+            togglePlaying();
+
+        }
+        console.log(currentLyric)
+
+        if (currentLyric) {
+            currentLyric.togglePlay();
+        }
+    }, [currentLyric])
     const touchStartHandle = useCallback((e) => {
         touch.initiated = true;
         touch.moved = false
@@ -109,39 +158,6 @@ function Player(props) {
         e.preventDefault();
     }, [touch])
 
-    function getLyric() {
-        if (currentSong && currentSong.getLyric) {
-            currentSong.getLyric().then((lyric) => {
-                let lineRefGroup = null;
-                currentLyric = new Lyric(lyric, ({lineNum, txt}) => {
-                    setCurrentLineNum(lineNum)
-
-                    if (lineNum > LYRIC_LINES) {
-                        let lineEl = lineRefGroup[lineNum - LYRIC_LINES].current
-                        lyricRef.current.scrollToElement(lineEl, 0)
-                    } else {
-                        lyricRef.current.scrollToElement(0, 0, 1000)
-                    }
-                    // this.playingLyric = txt
-                });
-                lineRefGroup = currentLyric.lines.map(() => {
-                    return createRef()
-                })
-                setLines(currentLyric.lines);
-                setLineRefGroup(lineRefGroup)
-
-                if (playing) {
-                    currentLyric.play()
-                }
-            }).catch(() => {
-                currentLyric = null;
-                // this.playingLyric = ''
-                setCurrentLineNum(0);
-            })
-        }
-
-    }
-
 
     useEffect(() => {
         if (!mode) {
@@ -154,6 +170,10 @@ function Player(props) {
     useEffect(() => {
         if (currentSong && audioRef.current && playing) {
             audioRef.current.play()
+            if (currentLyric) {
+                console.log('stop', currentLyric)
+                currentLyric.stop();
+            }
             getLyric();
         }
     }, [currentSong]);
@@ -178,11 +198,6 @@ function Player(props) {
         setFullScreen(true);
     }
 
-    function playSongIfPause() {
-        if (!playing) {
-            togglePlaying();
-        }
-    }
 
     function next() {
         if (!songReady) {
@@ -216,6 +231,9 @@ function Player(props) {
 
     function togglePlaying(e) {
         setPlayingState(!playing);
+        if (currentLyric) {
+            currentLyric.togglePlay();
+        }
         if (e) {
             e.stopPropagation();
         }
@@ -256,6 +274,9 @@ function Player(props) {
         if (!playing) {
             togglePlaying()
         }
+        if (currentLyric) {
+            currentLyric.seek(time * 1000);
+        }
     }
 
     function resetCurrentIndex(list) {
@@ -276,6 +297,9 @@ function Player(props) {
     function loop() {
         audioRef.current.currentTime = 0
         audioRef.current.play()
+        if (currentLyric) {
+            currentLyric.seek();
+        }
     }
 
     function changeMode() {
@@ -343,8 +367,8 @@ function Player(props) {
                     </div>
                     <div className="bottom">
                         <div className="dot-wrapper">
-                            <span className={"dot"+`${currentShow === "cd"?" active":""}`}></span>
-                            <span className={"dot"+`${currentShow === "lyric"?" active":""}`}></span>
+                            <span className={"dot" + `${currentShow === "cd" ? " active" : ""}`}></span>
+                            <span className={"dot" + `${currentShow === "lyric" ? " active" : ""}`}></span>
                         </div>
                         <div className="progress-wrapper">
                             <span className="time time-l">
