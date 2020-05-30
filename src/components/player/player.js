@@ -1,23 +1,24 @@
-import React, {useCallback, useEffect, useMemo, useRef, useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import {Scroll} from "../../base/scroll/scroll";
 import {connect} from "react-redux";
 import './player.scss';
-import {setCurrentIndex, setFullScreen, setPlayingMode, setPlayingState} from "../../redux/actions";
+import {setCurrentIndex, setFullScreen, setPlayingMode, setPlayingState, setPlayList} from "../../redux/actions";
 import {ProgressBar} from "../../base/progress-bar/progress-bar";
 import {ProgressCircle} from "../../base/progress-circle/progress-circle";
 import {playMode} from "../../common/js/config";
+import {shuffle} from "../../common/js/utils";
 
 function Player(props) {
     let {
         playList, fullScreen, currentIndex, sequenceList,
         setFullScreen, setPlayingState,
         setCurrentIndex, setPlayingMode,
-        playing, mode
+        playing, mode, setPlayList
     } = props;
     let [songReady, setSongReady] = useState(false); // audio可以播放歌曲了
     let [currentTime, setCurrentTime] = useState(null);
     const [iconMode, setIconMode] = useState(null);
-    const currentSong = sequenceList && sequenceList[currentIndex] || {};
+    const currentSong = playList && playList[currentIndex] || {};
     const audioRef = useRef();
     const [songPercent, setSongPercent] = useState(0);
 
@@ -136,12 +137,40 @@ function Player(props) {
         }
     }
 
+    function resetCurrentIndex(list) {
+        let index = list.findIndex((item) => {
+            return item.id === currentSong.id
+        })
+        setCurrentIndex(index)
+    }
+
+    function end() {
+        if (mode === playMode.loop) {
+            loop()
+        } else {
+            next()
+        }
+    }
+
+    function loop() {
+        audioRef.current.currentTime = 0
+        audioRef.current.play()
+    }
+
     function changeMode() {
         if (!mode) {
             mode = playMode.sequence;
         }
-        const iconMode = (mode + 1) % 3
-        setPlayingMode(iconMode);
+        const songPlayMode = (mode + 1) % 3
+        setPlayingMode(songPlayMode);
+        let list = null;
+        if (songPlayMode === playMode.random) {
+            list = shuffle(sequenceList);
+        } else {
+            list = sequenceList;
+        }
+        resetCurrentIndex(list)
+        setPlayList(list);
     }
 
     if (playList && playList.length > 0) {
@@ -244,6 +273,7 @@ function Player(props) {
                 </div>
             }
             <audio ref={audioRef} src={currentSong.url} onTimeUpdate={timeUpdateHandle} onError={audioErrorHandle}
+                   onEnded={end}
                    onCanPlay={canPlayHandle}/>
         </div>
     } else {
@@ -262,7 +292,8 @@ export default connect(
         setFullScreen,
         setPlayingState,
         setCurrentIndex,
-        setPlayingMode
+        setPlayingMode,
+        setPlayList
     }
 )(Player)
 
