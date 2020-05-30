@@ -1,4 +1,5 @@
 import * as types from '../actionTypes'
+import {playMode} from "../../common/js/config";
 
 export default function (state = {}, action) {
     switch (action.type) {

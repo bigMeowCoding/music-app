@@ -1,23 +1,35 @@
-import React, {useCallback, useEffect, useRef, useState} from "react";
+import React, {useCallback, useEffect, useMemo, useRef, useState} from "react";
 import {Scroll} from "../../base/scroll/scroll";
 import {connect} from "react-redux";
 import './player.scss';
-import {setCurrentIndex, setFullScreen, setPlayingState} from "../../redux/actions";
+import {setCurrentIndex, setFullScreen, setPlayingMode, setPlayingState} from "../../redux/actions";
 import {ProgressBar} from "../../base/progress-bar/progress-bar";
 import {ProgressCircle} from "../../base/progress-circle/progress-circle";
+import {playMode} from "../../common/js/config";
 
 function Player(props) {
     let {
         playList, fullScreen, currentIndex, sequenceList,
         setFullScreen, setPlayingState,
-        setCurrentIndex,
-        playing
+        setCurrentIndex, setPlayingMode,
+        playing, mode
     } = props;
     let [songReady, setSongReady] = useState(false); // audio可以播放歌曲了
     let [currentTime, setCurrentTime] = useState(null);
+    const [iconMode, setIconMode] = useState(null);
     const currentSong = sequenceList && sequenceList[currentIndex] || {};
     const audioRef = useRef();
     const [songPercent, setSongPercent] = useState(0);
+
+    useEffect(() => {
+        if (!mode) {
+            mode = playMode.sequence;
+        }
+        const iconMode = mode === playMode.sequence ? 'icon-sequence'
+            : mode === playMode.loop ? 'icon-loop' : 'icon-random';
+
+        setIconMode(iconMode);
+    }, [mode])
     useEffect(() => {
         if (currentSong && audioRef.current && playing) {
             audioRef.current.play()
@@ -124,6 +136,14 @@ function Player(props) {
         }
     }
 
+    function changeMode() {
+        if (!mode) {
+            mode = playMode.sequence;
+        }
+        const iconMode = (mode + 1) % 3
+        setPlayingMode(iconMode);
+    }
+
     if (playList && playList.length > 0) {
         return <div className="player">
             {fullScreen ? <div className="normal-player">
@@ -180,7 +200,7 @@ function Player(props) {
                         </div>
                         <div className="operators">
                             <div className="icon i-left">
-                                <i></i>
+                                <i className={iconMode} onClick={changeMode}></i>
                             </div>
 
                             <div className={"icon i-left " + `${songReady ? '' : 'disable'}`}>
@@ -212,14 +232,15 @@ function Player(props) {
                         </p>
                     </div>
                     <div className="control">
-                        <ProgressCircle percent = {songPercent} radius={32} >
-                            <i onClick={togglePlaying} className={"icon-mini " + `${playing ? 'icon-pause-mini' : 'icon-play-mini'}`}></i>
+                        <ProgressCircle percent={songPercent} radius={32}>
+                            <i onClick={togglePlaying}
+                               className={"icon-mini " + `${playing ? 'icon-pause-mini' : 'icon-play-mini'}`}></i>
 
                         </ProgressCircle>
                     </div>
-                    <div className="control" >
-                    <i className="icon-playlist"></i>
-                </div>
+                    <div className="control">
+                        <i className="icon-playlist"></i>
+                    </div>
                 </div>
             }
             <audio ref={audioRef} src={currentSong.url} onTimeUpdate={timeUpdateHandle} onError={audioErrorHandle}
@@ -231,13 +252,8 @@ function Player(props) {
 }
 
 const mapStateToProps = state => {
-    const {playList, currentIndex, sequenceList, fullScreen, playing} = state.playSong;
     return {
-        playList,
-        currentIndex,
-        sequenceList,
-        fullScreen,
-        playing
+        ...state.playSong
     };
 };
 export default connect(
@@ -245,7 +261,8 @@ export default connect(
     {
         setFullScreen,
         setPlayingState,
-        setCurrentIndex
+        setCurrentIndex,
+        setPlayingMode
     }
 )(Player)
 
