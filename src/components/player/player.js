@@ -1,4 +1,4 @@
-import React, {createRef, useEffect, useMemo, useRef, useState} from "react";
+import React, {createRef, useCallback, useEffect, useMemo, useRef, useState} from "react";
 import {Scroll} from "../../base/scroll/scroll";
 import {connect} from "react-redux";
 import './player.scss';
@@ -8,8 +8,12 @@ import {ProgressCircle} from "../../base/progress-circle/progress-circle";
 import {playMode} from "../../common/js/config";
 import {shuffle} from "../../common/js/utils";
 import Lyric from 'lyric-parser'
+import {prefixStyle} from "../../common/js/dom";
 
 const LYRIC_LINES = 5;
+
+const transform = prefixStyle('transform')
+const transitionDuration = prefixStyle('transitionDuration')
 
 function Player(props) {
     let {
@@ -24,12 +28,86 @@ function Player(props) {
     let [currentTime, setCurrentTime] = useState(null);
     const [iconMode, setIconMode] = useState(null);
     const [currentLineNum, setCurrentLineNum] = useState(0);
+    const [currentShow, setCurrentShow] = useState('cd');
     const currentSong = playList && playList[currentIndex] || {};
     const audioRef = useRef();
     const lyricRef = useRef();
+    const lyricWrapper = useRef();
+    const middleLRef = useRef();
+    const [touch, setTouch] = useState({});
+
     const [songPercent, setSongPercent] = useState(0);
     const [lineRefGroup, setLineRefGroup] = useState([]);
+    const touchStartHandle = useCallback((e) => {
+        touch.initiated = true;
+        touch.moved = false
+        touch.startX = e.touches[0].pageX;
+        touch.startY = e.touches[0].pageY;
+        e.stopPropagation();
+        e.preventDefault();
+    }, [touch]);
 
+    const touchMoveHandle = useCallback((e) => {
+        if (!touch.initiated) {
+            return;
+        }
+        const eventTouch = e.touches[0]
+        const deltaX = eventTouch.pageX - touch.startX
+        const deltaY = eventTouch.pageY - touch.startY
+        if (Math.abs(deltaY) > Math.abs(deltaX)) {
+            return
+        }
+        if (!touch.moved) {
+            touch.moved = true;
+        }
+        const left = currentShow === 'cd' ? 0 : -window.innerWidth
+        const offsetWidth = Math.min(0, Math.max(-window.innerWidth, left + deltaX))
+        touch.percent = Math.abs(offsetWidth / window.innerWidth)
+        lyricWrapper.current.style[transform] = `translate3d(${offsetWidth}px,0,0)`
+        lyricWrapper.current.style[transitionDuration] = 0
+        middleLRef.current.style.opacity = 1 - touch.percent;
+        middleLRef.current.style[transitionDuration] = 0
+        e.stopPropagation();
+        e.preventDefault();
+    }, [touch])
+
+    const touchEndHandle = useCallback((e) => {
+        if (!touch.moved) {
+            return;
+        }
+
+        let offsetWidth
+        let opacity
+        if (currentShow === 'cd') {
+            if (touch.percent > 0.1) {
+                offsetWidth = -window.innerWidth
+                opacity = 0
+                setCurrentShow('lyric')
+            } else {
+                offsetWidth = 0
+                opacity = 1
+                setCurrentShow('cd')
+
+            }
+        } else {
+            if (touch.percent < 0.9) {
+                offsetWidth = 0
+                setCurrentShow('cd')
+                opacity = 1
+            } else {
+                offsetWidth = -window.innerWidth
+                opacity = 0
+            }
+        }
+        const time = 300
+        lyricWrapper.current.style[transform] = `translate3d(${offsetWidth}px,0,0)`
+        lyricWrapper.current.style[transitionDuration] = `${time}ms`
+        middleLRef.current.style.opacity = opacity
+        middleLRef.current.style[transitionDuration] = `${time}ms`
+        touch.initiated = false;
+        e.stopPropagation();
+        e.preventDefault();
+    }, [touch])
 
     function getLyric() {
         if (currentSong && currentSong.getLyric) {
@@ -38,7 +116,7 @@ function Player(props) {
                 currentLyric = new Lyric(lyric, ({lineNum, txt}) => {
                     setCurrentLineNum(lineNum)
 
-                    if (lineNum > LYRIC_LINES ) {
+                    if (lineNum > LYRIC_LINES) {
                         let lineEl = lineRefGroup[lineNum - LYRIC_LINES].current
                         lyricRef.current.scrollToElement(lineEl, 0)
                     } else {
@@ -216,6 +294,7 @@ function Player(props) {
         setPlayList(list);
     }
 
+
     if (playList && playList.length > 0) {
         return <div className="player">
             {fullScreen ? <div className="normal-player">
@@ -233,8 +312,9 @@ function Player(props) {
                             {currentSong.singer}
                         </h2>
                     </div>
-                    <div className="middle">
-                        <div className="middle-l">
+                    <div className="middle" onTouchStart={touchStartHandle} onTouchMove={touchMoveHandle}
+                         onTouchEnd={touchEndHandle}>
+                        <div className="middle-l" ref={middleLRef}>
                             <div className="cd-wrapper">
                                 <div className={`cd ${playing ? 'play' : 'play pause'}`}>
                                     <img className="image" src={currentSong.image}/>
@@ -244,10 +324,9 @@ function Player(props) {
                                 <div className="playing-lyric"></div>
                             </div>
                         </div>
-                        <div className='lyric-scroll-wrapper'>
-
+                        <div className="middle-r" ref={lyricWrapper}>
                             <Scroll ref={lyricRef} data={lines}>
-                                <div className="middle-r">
+                                <div className='lyric-scroll-wrapper'>
                                     <div className="lyric-wrapper">
                                         {lines ? lines.map((line, index) => {
                                             return (<p
@@ -261,12 +340,11 @@ function Player(props) {
 
                             </Scroll>
                         </div>
-
                     </div>
                     <div className="bottom">
                         <div className="dot-wrapper">
-                            <span className="dot"></span>
-                            <span className="dot"></span>
+                            <span className={"dot"+`${currentShow === "cd"?" active":""}`}></span>
+                            <span className={"dot"+`${currentShow === "lyric"?" active":""}`}></span>
                         </div>
                         <div className="progress-wrapper">
                             <span className="time time-l">
