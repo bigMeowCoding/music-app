@@ -1,4 +1,4 @@
-import React, {useEffect, useRef, useState} from "react";
+import React, {createRef, useEffect, useMemo, useRef, useState} from "react";
 import {Scroll} from "../../base/scroll/scroll";
 import {connect} from "react-redux";
 import './player.scss';
@@ -7,6 +7,9 @@ import {ProgressBar} from "../../base/progress-bar/progress-bar";
 import {ProgressCircle} from "../../base/progress-circle/progress-circle";
 import {playMode} from "../../common/js/config";
 import {shuffle} from "../../common/js/utils";
+import Lyric from 'lyric-parser'
+
+const LYRIC_LINES = 5;
 
 function Player(props) {
     let {
@@ -16,11 +19,51 @@ function Player(props) {
         playing, mode, setPlayList
     } = props;
     let [songReady, setSongReady] = useState(false); // audio可以播放歌曲了
+    let currentLyric = null;
+    let [lines, setLines] = useState([]);
     let [currentTime, setCurrentTime] = useState(null);
     const [iconMode, setIconMode] = useState(null);
+    const [currentLineNum, setCurrentLineNum] = useState(0);
     const currentSong = playList && playList[currentIndex] || {};
     const audioRef = useRef();
+    const lyricRef = useRef();
     const [songPercent, setSongPercent] = useState(0);
+    const [lineRefGroup, setLineRefGroup] = useState([]);
+
+
+    function getLyric() {
+        if (currentSong && currentSong.getLyric) {
+            currentSong.getLyric().then((lyric) => {
+                let lineRefGroup = null;
+                currentLyric = new Lyric(lyric, ({lineNum, txt}) => {
+                    setCurrentLineNum(lineNum)
+
+                    if (lineNum > LYRIC_LINES ) {
+                        let lineEl = lineRefGroup[lineNum - LYRIC_LINES].current
+                        lyricRef.current.scrollToElement(lineEl, 0)
+                    } else {
+                        lyricRef.current.scrollToElement(0, 0, 1000)
+                    }
+                    // this.playingLyric = txt
+                });
+                lineRefGroup = currentLyric.lines.map(() => {
+                    return createRef()
+                })
+                setLines(currentLyric.lines);
+                setLineRefGroup(lineRefGroup)
+
+                if (playing) {
+                    currentLyric.play()
+                }
+            }).catch(() => {
+                currentLyric = null;
+                // this.playingLyric = ''
+                setCurrentLineNum(0);
+            })
+        }
+
+    }
+
 
     useEffect(() => {
         if (!mode) {
@@ -33,6 +76,7 @@ function Player(props) {
     useEffect(() => {
         if (currentSong && audioRef.current && playing) {
             audioRef.current.play()
+            getLyric();
         }
     }, [currentSong]);
     useEffect(() => {
@@ -200,13 +244,24 @@ function Player(props) {
                                 <div className="playing-lyric"></div>
                             </div>
                         </div>
-                        <Scroll className="middle-r">
-                            <div className="lyric-wrapper">
-                                <div>
-                                    <p className="text"></p>
+                        <div className='lyric-scroll-wrapper'>
+
+                            <Scroll ref={lyricRef} data={lines}>
+                                <div className="middle-r">
+                                    <div className="lyric-wrapper">
+                                        {lines ? lines.map((line, index) => {
+                                            return (<p
+                                                ref={lineRefGroup[index]}
+                                                className={`text${currentLineNum === index ? ' current' : ''}`}>
+                                                {line.txt}
+                                            </p>)
+                                        }) : 'sdf'}
+                                    </div>
                                 </div>
-                            </div>
-                        </Scroll>
+
+                            </Scroll>
+                        </div>
+
                     </div>
                     <div className="bottom">
                         <div className="dot-wrapper">

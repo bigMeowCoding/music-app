@@ -17,4 +17,11 @@ module.exports = function (app,server) {
             'Content-type': 'application/x-www-form-urlencoded'
         }
     }));
+    app.use(createProxyMiddleware('/lyric/fcgi-bin/fcg_query_lyric_new.fcg', {
+        target: 'https://c.y.qq.com',
+        headers: {
+            referer: 'https://c.y.qq.com/', // 请求源自的网站
+            host:'c.y.qq.com'
+        }
+    }));
 };
