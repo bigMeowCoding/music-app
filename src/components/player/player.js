@@ -38,11 +38,11 @@ function Player(props) {
 
     const [songPercent, setSongPercent] = useState(0);
     const [lineRefGroup, setLineRefGroup] = useState([]);
+    const [playingLyric, setPlayingLyric] = useState('');
     const getLyric = useCallback(() => {
         if (currentSong && currentSong.getLyric) {
             if (currentLyric) {
                 currentLyric.stop();
-                console.log('stop')
             }
             currentSong.getLyric().then((lyric) => {
                 let lineRefGroup = null;
@@ -52,11 +52,15 @@ function Player(props) {
 
                     if (lineNum > LYRIC_LINES) {
                         let lineEl = lineRefGroup[lineNum - LYRIC_LINES].current
-                        lyricRef.current.scrollToElement(lineEl, 0)
+                        if (lyricRef.current) {
+                            lyricRef.current.scrollToElement(lineEl, 0);
+                        }
                     } else {
-                        lyricRef.current.scrollToElement(0, 0, 1000)
+                        if (lyricRef.current) {
+                            lyricRef.current.scrollToElement(0, 0, 1000);
+                        }
                     }
-                    // this.playingLyric = txt
+                    setPlayingLyric(txt);
                 });
                 setCurrentLyric(newLyric);
                 lineRefGroup = newLyric.lines.map(() => {
@@ -345,7 +349,7 @@ function Player(props) {
                                 </div>
                             </div>
                             <div className="playing-lyric-wrapper">
-                                <div className="playing-lyric"></div>
+                                <div className="playing-lyric">{playingLyric}</div>
                             </div>
                         </div>
                         <div className="middle-r" ref={lyricWrapper}>
