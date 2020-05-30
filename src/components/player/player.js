@@ -74,7 +74,7 @@ function Player(props) {
                 }
             }).catch(() => {
                 setCurrentLyric(null);
-                // this.playingLyric = ''
+                setPlayingLyric('');
                 setCurrentLineNum(0);
             })
         }
@@ -85,7 +85,6 @@ function Player(props) {
             togglePlaying();
 
         }
-        console.log(currentLyric)
 
         if (currentLyric) {
             currentLyric.togglePlay();
@@ -207,13 +206,18 @@ function Player(props) {
         if (!songReady) {
             return;
         }
-        if (currentIndex === playList.length - 1) {
-            setCurrentIndex(0)
+        if (playList.length === 1) {
+            loop();
         } else {
-            setCurrentIndex(currentIndex + 1);
+            if (currentIndex === playList.length - 1) {
+                setCurrentIndex(0)
+            } else {
+                setCurrentIndex(currentIndex + 1);
+            }
+            playSongIfPause();
+            waitSongLoad();
         }
-        playSongIfPause();
-        waitSongLoad();
+
     }
 
     function waitSongLoad() {
@@ -224,13 +228,18 @@ function Player(props) {
         if (!songReady) {
             return;
         }
-        if (currentIndex === 0) {
-            setCurrentIndex(playList.length - 1);
+        if (playList.length === 1) {
+            loop();
         } else {
-            setCurrentIndex(currentIndex - 1);
+            if (currentIndex === 0) {
+                setCurrentIndex(playList.length - 1);
+            } else {
+                setCurrentIndex(currentIndex - 1);
+            }
+            playSongIfPause()
+            waitSongLoad();
         }
-        playSongIfPause()
-        waitSongLoad();
+
     }
 
     function togglePlaying(e) {
