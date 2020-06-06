@@ -13,6 +13,7 @@ export default class Song {
         this.image = image
         this.url = url
     }
+
     getLyric() {
         if (this.lyric) {
             return Promise.resolve(this.lyric)
@@ -56,18 +57,19 @@ export function filterSinger(singer) {
 }
 
 export function processSongsUrl(songs) {
+
     if (!songs.length) {
         return Promise.resolve(songs)
     }
-    return getSongsUrl(songs).then((res) => {
-        if (res.code === ERR_OK) {
-            let midUrlInfo = res.url_mid.data.midurlinfo
-            midUrlInfo.forEach((info, index) => {
-                let song = songs[index]
-
-                song.url = `http://dl.stream.qqmusic.qq.com/${info.purl}`
-            })
-        }
+    return getSongsUrl(songs).then((purlMap) => {
+        songs = songs.filter((song) => {
+            const purl = purlMap[song.mid];
+            if (purl) {
+                song.url = `http://dl.stream.qqmusic.qq.com/${purl}`
+                return true
+            }
+            return false
+        })
         return songs
     })
 }

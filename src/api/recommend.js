@@ -33,3 +33,32 @@ export function getDiscList() {
         return Promise.resolve(res.data)
     })
 }
+export function getSongList(disstid) {
+    const url = '/qzone/fcg-bin/fcg_ucc_getcdinfo_byids_cp.fcg'
+
+    const data = Object.assign({}, commonParams, {
+        disstid,
+        type: 1,
+        json: 1,
+        utf8: 1,
+        onlysong: 0,
+        platform: 'yqq',
+        hostUin: 0,
+        needNewCode: 0
+    })
+
+    return axios.get(url, {
+        params: data
+    }).then((res) => {
+
+        let ret = res.data
+        if (typeof ret === 'string') {
+            const reg = /^\w+\(({.+})\)$/
+            const matches = ret.match(reg)
+            if (matches) {
+                ret = JSON.parse(matches[1])
+            }
+        }
+        return Promise.resolve(ret)
+    })
+}

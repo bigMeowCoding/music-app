@@ -3,7 +3,7 @@ import axios from 'axios'
 import {getUid} from "../common/js/uid";
 
 export function getSongsUrl(songs) {
-    const url =  '/cgi-bin/musicu.fcg';
+    const url = '/cgi-bin/musicu.fcg';
 
     let mids = []
     let types = []
@@ -35,9 +35,14 @@ export function getSongsUrl(songs) {
                 if (res.code === ERR_OK) {
                     let urlMid = res.url_mid
                     if (urlMid && urlMid.code === ERR_OK) {
-                        const info = urlMid.data.midurlinfo[0]
-                        if (info && info.purl) {
-                            resolve(res)
+                        const purlMap = {};
+                        urlMid.data.midurlinfo.forEach((item) => {
+                            if (item.purl) {
+                                purlMap[item.songmid] = item.purl;
+                            }
+                        })
+                        if (Object.keys(purlMap).length > 0) {
+                            resolve(purlMap)
                         } else {
                             retry()
                         }

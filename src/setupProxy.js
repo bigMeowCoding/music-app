@@ -24,4 +24,11 @@ module.exports = function (app,server) {
             host:'c.y.qq.com'
         }
     }));
+    app.use(createProxyMiddleware('/qzone/fcg-bin/fcg_ucc_getcdinfo_byids_cp.fcg', {
+        target: 'https://c.y.qq.com',
+        headers: {
+            referer: 'https://c.y.qq.com/', // 请求源自的网站
+            host:'c.y.qq.com'
+        }
+    }));
 };
