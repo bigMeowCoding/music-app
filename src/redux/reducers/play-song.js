@@ -1,7 +1,7 @@
 import * as types from '../actionTypes'
-import {playMode} from "../../common/js/config";
 
 export default function (state = {}, action) {
+    console.log(action)
     switch (action.type) {
         case types.SET_SEQUENCE_LIST:
             return {
@@ -33,6 +33,12 @@ export default function (state = {}, action) {
                 ...state,
                 playing: action.isPlaying
             };
+        case types.SET_DISC:
+            console.log(action)
+            return {
+                ...state,
+                disc: action.disc
+            }
         default: {
             return state;
         }

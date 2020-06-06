@@ -1,5 +1,5 @@
 import {
-    SET_CURRENT_INDEX,
+    SET_CURRENT_INDEX, SET_DISC,
     SET_FULL_SCREEN, SET_PLAY_MODE,
     SET_PLAYING_STATE,
     SET_PLAYLIST,
@@ -51,4 +51,10 @@ export const setPlayingState = function (isPlaying) {
     }
 }
 
-
+export const setDisc = function (disc) {
+    console.log(disc)
+    return {
+        type: SET_DISC,
+        disc
+    }
+}

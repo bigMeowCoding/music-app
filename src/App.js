@@ -7,12 +7,13 @@ import {
     Route,
     Redirect,
 } from "react-router-dom";
-import {Recommend} from "./components/recommend/recommend";
+import Recommend from "./components/recommend/recommend";
 import SingerList from "./components/singer-list/singer-list";
 import {Rank} from "./components/rank/rank";
 import {Search} from "./components/search/search";
 import SingerDetail from "./components/singer-detail/singer-detail";
 import Player from "./components/player/player";
+import Disc from "./components/disc/disc";
 
 function App() {
     return (
@@ -25,7 +26,14 @@ function App() {
                         <Redirect to="/recommend"/>
                     </Route>
                     <Route path="/recommend">
-                        <Recommend/>
+                        <Switch>
+                            <Route exact path="/recommend">
+                                <Recommend/>
+                            </Route>
+                            <Route path='/recommend/:id'>
+                                <Disc></Disc>
+                            </Route>
+                        </Switch>
                     </Route>
                     <Route path="/singerList">
                         <Switch>

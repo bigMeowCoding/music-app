@@ -9,12 +9,16 @@ import {Slider} from "../../base/slider/slider";
 import './recommend.scss'
 import {Scroll} from "../../base/scroll/scroll";
 import {Loading} from "../../base/loading/loading";
+import {useHistory} from "react-router-dom";
+import {connect} from "react-redux";
+import {setDisc} from "../../redux/actions";
 
-export function Recommend() {
+function Recommend(props) {
+    let {setDisc} = props;
     let [recommends, setRecommends] = useState([]);
     let [discList, setDiscList] = useState([]);
     const scrollRef = useRef();
-
+    let history = useHistory()
     useEffect(() => {
         _getRecommend();
         _getDiscList();
@@ -46,6 +50,11 @@ export function Recommend() {
             scroll.refresh();
             carouselIsNotLoaded = false;
         }
+    }
+
+    function selectItem(discItem) {
+        history.push(`/recommend/${discItem.dissid}`);
+        setDisc(discItem);
     }
 
     return (
@@ -84,7 +93,9 @@ export function Recommend() {
                                 {
                                     discList.map((item, index) => {
                                         return (
-                                            <li key={index} className="item">
+                                            <li key={index} className="item" onClick={() => {
+                                                selectItem(item)
+                                            }}>
                                                 <div className="icon">
                                                     <LazyLoad>
                                                         <img src={item.imgurl} alt=""/>
@@ -123,3 +134,9 @@ export function Recommend() {
         </div>
     )
 }
+
+
+export default connect(
+    null,
+    {setDisc}
+)(Recommend);

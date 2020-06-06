@@ -12,7 +12,7 @@ const backdrop = prefixStyle('backdrop-filter')
 
 export function MusicList(props) {
     let {
-        title, bgImage, songs,
+        title, bgImage, songs=[],
         selectSongItem,
         randomPlayAll
     } = props;
