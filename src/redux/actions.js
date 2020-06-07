@@ -4,7 +4,7 @@ import {
     SET_PLAYING_STATE,
     SET_PLAYLIST,
     SET_SEQUENCE_LIST,
-    SET_SINGER
+    SET_SINGER, SET_TOP_LIST
 } from "./actionTypes";
 
 export const setSinger = singer => {
@@ -52,9 +52,15 @@ export const setPlayingState = function (isPlaying) {
 }
 
 export const setDisc = function (disc) {
-    console.log(disc)
     return {
         type: SET_DISC,
         disc
+    }
+}
+
+export const setTopList = function (topList) {
+    return {
+        type: SET_TOP_LIST,
+        topList
     }
 }

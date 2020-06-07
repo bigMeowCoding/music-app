@@ -1,7 +1,6 @@
 import * as types from '../actionTypes'
 
 export default function (state = {}, action) {
-    console.log(action)
     switch (action.type) {
         case types.SET_SEQUENCE_LIST:
             return {
@@ -34,10 +33,14 @@ export default function (state = {}, action) {
                 playing: action.isPlaying
             };
         case types.SET_DISC:
-            console.log(action)
             return {
                 ...state,
                 disc: action.disc
+            }
+        case types.SET_TOP_LIST:
+            return {
+                ...state,
+                topList: action.topList
             }
         default: {
             return state;

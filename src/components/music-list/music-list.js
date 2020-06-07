@@ -12,9 +12,9 @@ const backdrop = prefixStyle('backdrop-filter')
 
 export function MusicList(props) {
     let {
-        title, bgImage, songs=[],
+        title, bgImage, songs = [],
         selectSongItem,
-        randomPlayAll
+        randomPlayAll, rank
     } = props;
     let [scrollY, setScrollY] = useState(0);
     let [minTranslateY, setMinTranslateY] = useState(0);
@@ -107,7 +107,7 @@ export function MusicList(props) {
                         getPos={getScrollPos}
                         listenScroll={listenScroll} probeType={probeType}>
                     <div className="song-list-wrapper">
-                        <SongList songs={songs} selectSongItem={selectSongItem}/>
+                        <SongList rank={rank} songs={songs} selectSongItem={selectSongItem}/>
                     </div>
                     {
                         !songs.length ? <div className="loading-container">

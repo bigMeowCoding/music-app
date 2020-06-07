@@ -9,11 +9,12 @@ import {
 } from "react-router-dom";
 import Recommend from "./components/recommend/recommend";
 import SingerList from "./components/singer-list/singer-list";
-import {Rank} from "./components/rank/rank";
+import Rank from "./components/rank/rank";
 import {Search} from "./components/search/search";
 import SingerDetail from "./components/singer-detail/singer-detail";
 import Player from "./components/player/player";
 import Disc from "./components/disc/disc";
+import TopList from "./components/top-list/top-list";
 
 function App() {
     return (
@@ -31,7 +32,7 @@ function App() {
                                 <Recommend/>
                             </Route>
                             <Route path='/recommend/:id'>
-                                <Disc></Disc>
+                                <Disc/>
                             </Route>
                         </Switch>
                     </Route>
@@ -46,7 +47,14 @@ function App() {
                         </Switch>
                     </Route>
                     <Route path="/rank">
-                        <Rank/>
+                        <Switch>
+                            <Route exact path="/rank">
+                                <Rank/>
+                            </Route>
+                            <Route path="/rank/:id">
+                                <TopList/>
+                            </Route>
+                        </Switch>
                     </Route>
                     <Route path="/search">
                         <Search/>
