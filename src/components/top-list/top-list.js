@@ -39,7 +39,7 @@ function TopList(props) {
         _getMusicList();
     }, [])
     return <div>
-        <MusicList rank={true} title={topList.topTitle} bgImage={topList.picUrl} songs={songs}/>
+        <MusicList rank={true} title={topList.topTitle} bgImage={songs && songs[0]?.image} songs={songs}/>
     </div>
 }
 
